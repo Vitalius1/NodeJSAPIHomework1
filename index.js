@@ -8,6 +8,7 @@ const http = require("http");
 const url = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
 const config = require("./config");
+const router = require("./router");
 
 // Instantiating the HTTP server
 const httpServer = http.createServer((req, res) => {
@@ -54,7 +55,7 @@ function serverLogic(req, res) {
     const chosenHandler =
       typeof router[trimmedPath] !== "undefined"
         ? router[trimmedPath]
-        : handlers.notFound;
+        : router.notFound;
 
     // Construct the data object to send to the handler
     const data = {
@@ -84,26 +85,3 @@ function serverLogic(req, res) {
     });
   });
 }
-
-// Define the handlers.
-const handlers = {};
-
-// Ping handler
-handlers.hello = (data, callback) => {
-  const welcomeMessage = `Hello ${
-    data.queryStringObject && data.queryStringObject.name
-      ? data.queryStringObject.name
-      : data.headers["user-agent"].split("/")[0]
-  }! Welcome to the pirple NodeJs master class.`;
-  callback(200, { welcomeMessage });
-};
-
-// Not found handler
-handlers.notFound = (data, callback) => {
-  callback(404);
-};
-
-// Define a request router
-const router = {
-  hello: handlers.hello
-};
